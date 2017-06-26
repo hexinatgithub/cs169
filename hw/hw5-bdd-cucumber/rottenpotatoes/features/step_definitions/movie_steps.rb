@@ -28,9 +28,7 @@ When /I (un)?check the following ratings: (.*)/ do |uncheck, rating_list|
   #   "When I uncheck..." steps in lines 89-95 of web_steps.rb
   check_or_not = uncheck ? "uncheck" : "check"
   rating_list.delete(' ').split(',').each do |rating|
-    steps %Q{
-      When I #{check_or_not} "ratings_#{rating}"
-    }
+    steps `When I #{check_or_not} "ratings_#{rating}"`
   end
 end
 
@@ -38,7 +36,7 @@ Then /I should( not)? see following movies: (.*)/ do |should_see, movie_list|
   see_or_not = should_see ? " not" : ""
   movie_list.split(',').each do |movie|
     movie = movie.strip
-    steps "Then I should#{see_or_not} see #{movie}"
+    steps `Then I should#{see_or_not} see #{movie}`
   end
 end
 
@@ -48,9 +46,7 @@ Then /I should see all the movies/ do
   movies = Movie.all
   expect(rows).to eq movies.length
   movies.each do |movie|
-    steps %Q{
-      Then I should see "#{movie.title}"
-    }
+    steps `Then I should see "#{movie.title}"`
   end
 end
 
@@ -59,16 +55,14 @@ Then /I should see movies sorted in (.*)/ do |order_item|
   order_item = order_item.delete '"'
   if order_item == "alphabetically"
     movies = movies.order :title
-    # movies = Movie.all.sort_by {|hash| hash[:title]}
   elsif order_item == "release date"
     movies = movies.order :release_date
-    # movies = Movie.all.sort_by {|hash| hash[:release_date]}
   end
   movies.each_index do |i|
     if i <= movies.length - 2
       movie_1 = movies[i]
       movie_2 = movies[i+1]
-      steps %Q{Then I should see "#{movie_1.title}" before "#{movie_2.title}"}
+      steps `Then I should see "#{movie_1.title}" before "#{movie_2.title}"`
     end
   end
 end
